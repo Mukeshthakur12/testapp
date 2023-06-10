@@ -5,10 +5,10 @@ import 'package:testapp/CustomWidget/app_text.dart';
 
 
 
-class BaseAppScaffold extends StatelessWidget {
+class AppBackScalfold extends StatelessWidget {
   final Widget child;
   final bool isIcon;
-  const BaseAppScaffold({Key? key, required this.child, this.isIcon=false}) : super(key: key);
+  const AppBackScalfold({Key? key, required this.child, this.isIcon=false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +28,17 @@ class BaseAppScaffold extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.menu,size: 18,),
+                  IconButton(icon: Icon(CupertinoIcons.arrow_left,size: 18,),
+                      onPressed: () {
+                        Navigator.pop(context); // Pop the current route and go back
+                      },
+                  ),
                   SizedBox(width: 4,),
-                  AppText("MENU",style: th.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,fontSize: 15
+                  AppText("BACK",style: th.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,fontSize: 15
                   ),),
                 ],
-              ), 
+              ),
               SvgPicture.asset('assets/AppBar/logo.svg',height: 35,width: 40,),
               isIcon?Container(
                 child: Row(

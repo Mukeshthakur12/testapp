@@ -179,9 +179,9 @@ class AppPadding extends StatelessWidget {
   const AppPadding.x2(
       {Key? key,
         this.top = 0,
-        this.right = defaultPadding * 2,
+        this.right = 20,
         this.bottom = 0,
-        this.left = defaultPadding * 2,
+        this.left = 20,
         required this.child})
       : super(key: key);
 

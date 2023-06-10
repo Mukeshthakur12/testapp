@@ -1,7 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:testapp/CustomWidget/app_text.dart';
+import 'package:testapp/CustomWidget/buttonwidget.dart';
 import 'package:testapp/Screens/CommonScreens/base_app_scafold.dart';
+import 'package:testapp/Screens/CommonScreens/category_screen.dart';
 import 'package:testapp/Screens/Home/selected_outfit.dart';
+import 'package:testapp/Utils/app_color.dart';
 
 class Product {
   final String name;
@@ -24,6 +29,7 @@ class _HomeScreen extends State<HomeScreen> {
     Product(name: 'Product 4', imageUrl: 'assets/product4.png',description:'Girocollo in lana merino'),
     Product(name: 'Product 5', imageUrl: 'assets/product2.png',description:'Girocollo in lana merino'),
     Product(name: 'Product 6', imageUrl: 'assets/product3.png',description:'Girocollo in lana merino'),
+    Product(name: 'Product 7', imageUrl: 'assets/product1.png',description:'Girocollo in lana merino'),
   ];
 
   Set<int> selectedProductIndices = Set<int>();
@@ -37,11 +43,57 @@ class _HomeScreen extends State<HomeScreen> {
         selectedProductIndices.add(index);
       }
 
-      if (selectedProductIndices.length >= 3) {
+      if (selectedProductIndices.length >= 1) {
         selectedProducts = Set<String>();
         selectedProductIndices.forEach((index) {
           selectedProducts.add(products[index].name);
         });
+      }
+      if (selectedProductIndices.length >= 1) {
+        showModalBottomSheet(
+          context: context,
+          useSafeArea: true,
+          builder: (BuildContext context) {
+            return Container(
+              // alignment: AlignmentDirectional.centerStart,
+              // padding: EdgeInsets.zero,
+              height: 80,
+              // width: MediaQuery.of(context).size.width*0.98,
+              child:Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CustomButton(svgImagePath: 'assets/AppBar/plus.svg', label: "Outfit",
+                          backgroundColor: Colors.white, borderColor: appYellowBlack,
+                          borderRadius: 8,
+                          textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.black),
+                          onPressed: (){}),
+                      CustomButton(svgImagePath: 'assets/AppBar/menu.svg', label: "Add to an outfit",
+                          backgroundColor: Colors.white, borderColor: appYellowBlack,
+                          borderRadius: 8,
+                          textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.black),
+                          onPressed: (){}),
+                      CustomButton(svgImagePath: 'assets/AppBar/left.svg', label: "Add to an outfit",
+                          backgroundColor: appYellowBlack, borderColor: appYellowBlack,
+                          borderRadius: 8,
+                          isleft: true,
+                          textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.black),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SelectedDataScreen(
+                                selectedButtons: selectedProducts.toList(),
+                                selectedProductIndices: selectedProductIndices.toList(),
+                                products: products,
+                              ),
+                            ),
+                          );
+                        },),
+                    ],
+                  ),
+            );
+          },
+        );
       }
     });
   }
@@ -49,88 +101,90 @@ class _HomeScreen extends State<HomeScreen> {
   bool isSelected(int index) {
     return selectedProductIndices.contains(index);
   }
-
+  bool isicon=false;
   @override
   Widget build(BuildContext context) {
+    var th = Theme.of(context).textTheme;
+    if(selectedProducts.isNotEmpty){
+      isicon=true;
+    }
+    else {
+      isicon = false;
+    }
     return BaseAppScaffold(
-      child: GridView.builder(
-        gridDelegate:
-        SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.65,
-        ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-          final isSelected = selectedProductIndices.contains(index);
+      isIcon: isicon,
+      child: Column(
+        children: [
+          CategoryScreen(),
+          SizedBox(height: 10,),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate:
+              SliverGridDelegateWithFixedCrossAxisCount(
+                // crossAxisSpacing: 0,
+                crossAxisCount: MediaQuery.of(context).size.width ~/ 191,
+                childAspectRatio: 0.68,
+              ),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final product = products[index];
+                final isSelected = selectedProductIndices.contains(index);
 
-          return Container(
-            // height: 600,
-            child: Column(
-              // mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: () => toggleSelection(index),
-                  child: Stack(
+                return Container(
+                  // color: Colors.red,
+                  // height: 600,
+                  child: Column(
+                    // mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        height: 200,
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: isSelected ? Colors.blue : Colors.transparent,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: SizedBox(
-                          height: 120,
-                          child: Image.asset(
-                            product.imageUrl,
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
+                      GestureDetector(
+                        onTap: () => toggleSelection(index),
+                        child: Stack(
+                          children: [
+                            Container(
+                              height: 200,
+                              width: 191,
+                              margin: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: isSelected ? appYellowBlack : Colors.transparent,
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                              child: SizedBox(
+                                height: 120,
+                                child: Image.asset(
+                                  product.imageUrl,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            if (isSelected)
+                              Positioned(
+                                bottom: 8,
+                                right: 8,
+                                child: SvgPicture.asset('assets/AppBar/tick.svg',
+                                )
+                              ),
+                          ],
                         ),
                       ),
-                      if (isSelected)
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Icon(
-                            Icons.check_circle,
-                            color: Colors.blue,
-                            size: 24,
-                          ),
-                        ),
+                      AppText(product.name,style: th.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),),
+                      AppText(product.description,style: th.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w400
+                      ),),
                     ],
                   ),
-                ),
-                AppText(product.name),
-                AppText(product.description),
-              ],
+                );
+              },
             ),
-          );
-        },
+          ),
+        ],
       ),
-      // floatingActionButton: selectedProducts.isNotEmpty
-      //     ? FloatingActionButton.extended(
-      //   onPressed: () {
-      //     // Navigate to the next screen with the selected buttons
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (context) => SelectedDataScreen(
-      //           selectedButtons: selectedProducts.toList(),
-      //         ),
-      //       ),
-      //     );
-      //   },
-      //   label: Text('Next'),
-      //   icon: Icon(Icons.arrow_forward),
-      // )
-      //     : null,
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
